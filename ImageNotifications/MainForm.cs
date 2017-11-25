@@ -9,6 +9,9 @@ namespace ImageNotifications
         {
             InitializeComponent();
 
+            DanbooruWrapper wrapper = new DanbooruWrapper();
+            var posts = wrapper.GetPosts("flandre_scarlet");
+            
             ShowToast();
         }
 
