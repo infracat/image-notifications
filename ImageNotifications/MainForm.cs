@@ -1,4 +1,8 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.IO;
+using System.Net;
+using System.Reflection;
+using System.Windows.Forms;
 using Windows.UI.Notifications;
 
 namespace ImageNotifications
@@ -11,14 +15,24 @@ namespace ImageNotifications
 
             DanbooruWrapper wrapper = new DanbooruWrapper();
             var posts = wrapper.GetPosts("flandre_scarlet");
-            
-            ShowToast();
+            var previewPath = String.Empty;
+
+
+            foreach (var post in posts)
+            {
+                if (!String.IsNullOrEmpty(post.PreviewUrl))
+                {
+                    previewPath = DownloadPreview(post);
+                    break;
+                }
+            }
+
+            ShowToast(previewPath);
         }
 
-        private void ShowToast()
+        private void ShowToast(string imagePath)
         {
             var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastImageAndText04);
-            string imagePath = @"D:\Documents\Graphics\Userpics\flandre4.png";
 
             var text = toastXml.GetElementsByTagName("text");
             text[0].AppendChild(toastXml.CreateTextNode("New Image"));
@@ -28,6 +42,23 @@ namespace ImageNotifications
 
             var toast = new ToastNotification(toastXml);
             ToastNotificationManager.CreateToastNotifier("test").Show(toast);
+        }
+
+        private string DownloadPreview(Post post)
+        {
+            var url = "http://danbooru.donmai.us" + post.PreviewUrl;
+            var tempDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\Temp\\";
+            var tempFilePath = tempDirectory + post.Id + Path.GetExtension(post.PreviewUrl);
+
+            if (!Directory.Exists(tempDirectory))
+            {
+                Directory.CreateDirectory(tempDirectory);
+            }
+
+            var client = new WebClient();
+            client.DownloadFile(url, tempFilePath);
+
+            return tempFilePath;
         }
     }
 }
