@@ -1,19 +1,36 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 
-namespace ImageNotifications
+namespace Imageboards
 {
+    /// <summary>
+    /// Gets data from Danbooru imageboard.
+    /// </summary>
     public class DanbooruWrapper
     {
-        private string apiUrl = "http://danbooru.donmai.us/posts.json";
+        /// <summary>
+        /// Imageboard URL.
+        /// </summary>
+        public static string Url { get { return "http://danbooru.donmai.us"; } }
 
+        private string apiUrl = Url + "/posts.json";
+
+        /// <summary>
+        /// Gets 20 posts by a given tag string.
+        /// </summary>
+        /// <param name="tags">Tags to search posts for.</param>
+        /// <returns>List of Post objects.</returns>
         public List<Post> GetPosts(string tags)
         {
-            string apiPath = apiUrl += "?tags=" + tags;
+            string apiPath = apiUrl + "?tags=" + tags;
             string jsonResult = GenerateRequest(apiPath);
 
-            List<Post> result = JsonConvert.DeserializeObject<List<Post>>(jsonResult);
+            List<Post> result = String.IsNullOrEmpty(jsonResult)
+                ? new List<Post>()
+                : JsonConvert.DeserializeObject<List<Post>>(jsonResult);
+
             return result;
         }
 
