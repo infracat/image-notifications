@@ -37,6 +37,26 @@ namespace ImageNotifications
             StartTimer();
         }
 
+        private void MainForm_Resize(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                notifyIconTray.Visible = true;
+                this.Hide();
+            }
+            else if (this.WindowState == FormWindowState.Normal)
+            {
+                notifyIconTray.Visible = false;
+            }
+        }
+
+        private void notifyIconTray_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            notifyIconTray.Visible = false;
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+        }
+
         private void checkBoxSafe_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.SafetyFilter = ((CheckBox)sender).Checked;
@@ -139,29 +159,14 @@ namespace ImageNotifications
                     }
 
                     var previewPath = lastPost.DownloadPreview(DanbooruWrapper.Url);
-
-                    var title = "New images at " + tag;
-                    ShowToast(previewPath, title);
+                    var notification = new ImageNotification(previewPath);
+                    notification.Show();
                 }
             }
 
             lastPostId = currentLastPostId;
             Properties.Settings.Default.LastPostId = lastPostId;
             Properties.Settings.Default.Save();
-        }
-
-        private void ShowToast(string imagePath, string title)
-        {
-            var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastImageAndText04);
-
-            var text = toastXml.GetElementsByTagName("text");
-            text[0].AppendChild(toastXml.CreateTextNode(title));
-
-            var imageElements = toastXml.GetElementsByTagName("image");
-            imageElements[0].Attributes.GetNamedItem("src").NodeValue = imagePath;
-
-            var toast = new ToastNotification(toastXml);
-            ToastNotificationManager.CreateToastNotifier("test").Show(toast);
         }
     }
 }

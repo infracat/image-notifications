@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.notifyIconTray = new System.Windows.Forms.NotifyIcon(this.components);
             this.groupBoxConfiguration = new System.Windows.Forms.GroupBox();
             this.labelInterval = new System.Windows.Forms.Label();
@@ -45,8 +46,9 @@
             // 
             // notifyIconTray
             // 
+            this.notifyIconTray.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIconTray.Icon")));
             this.notifyIconTray.Text = "Image Notifications";
-            this.notifyIconTray.Visible = true;
+            this.notifyIconTray.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIconTray_MouseDoubleClick);
             // 
             // groupBoxConfiguration
             // 
@@ -157,12 +159,14 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(384, 166);
             this.Controls.Add(this.groupBoxConfiguration);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Image Notifications";
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.groupBoxConfiguration.ResumeLayout(false);
             this.groupBoxConfiguration.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownInterval)).EndInit();
